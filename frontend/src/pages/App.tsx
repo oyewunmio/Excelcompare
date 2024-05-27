@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ComparePage from './ComparePage';
+import LogsPage from './LogsPage';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -20,6 +22,7 @@ function App() {
         .then(response => {
           setToken(storedToken);
           setUsername(response.data.username);
+          setUserRole(response.data.user_role);
           setIsLoading(false);
         })
         .catch(() => {
@@ -35,6 +38,15 @@ function App() {
     localStorage.setItem('token', token);
     setToken(token);
     setUsername(username);
+    // Fetch user role after setting the token
+    axios.get('http://localhost:8000/get/me', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(response => {
+        setUserRole(response.data.user_role);
+      });
   };
 
   if (isLoading) {
@@ -43,9 +55,10 @@ function App() {
 
   return (
     <Router>
-      <NavBar username={username} />
+      <NavBar username={username} userRole={userRole} />
       <Routes>
         <Route path="/" element={<ComparePage token={token} setToken={handleSetToken} />} />
+        <Route path="/logs" element={<LogsPage token={token!} />} />
       </Routes>
     </Router>
   );

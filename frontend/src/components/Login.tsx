@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 interface LoginProps {
-    setToken: (token: string, username: string) => void;
+    setToken: (token: string, username: string, userRole: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ setToken }) => {
@@ -22,14 +22,15 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setToken(response.data.access_token, username);
+            const { access_token, user_role } = response.data;
+            setToken(access_token, username, user_role);
         } catch (error) {
             console.error('Error logging in', error);
         }
     };
 
     return (
-        <div className="flex items-center">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
                 <h2 className="text-2xl mb-4 text-center">Login</h2>
                 <div className="mb-4">
