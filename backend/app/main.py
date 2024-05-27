@@ -124,7 +124,7 @@ async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFi
     
     computer_name = socket.gethostname()
 
-    create_log(db, user.username, differences)
+    create_log(db, user.username, differences, "Web")
     
     return {
         "differences": differences,

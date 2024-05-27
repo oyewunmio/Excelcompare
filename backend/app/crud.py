@@ -8,8 +8,8 @@ def get_user_by_username(*, session: Session, username: str) -> User | None:
     return session_user
 
 
-def create_log(session: Session, username: str, differences):
-    log = Log(username=username, log_time=datetime.utcnow(), document_differences=differences)
+def create_log(session: Session, username: str, differences, interface: str):
+    log = Log(username=username, log_time=datetime.utcnow(), document_differences=differences, interface=interface)
     session.add(log)
     session.commit()
     session.refresh(log)

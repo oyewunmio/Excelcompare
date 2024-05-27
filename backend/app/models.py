@@ -13,4 +13,5 @@ class Log(SQLModel, table=True):
     username: str
     log_time: datetime = Field(default_factory=datetime.utcnow)
     document_differences: str
+    interface: str = "Web"
 
