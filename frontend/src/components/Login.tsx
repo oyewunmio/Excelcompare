@@ -30,7 +30,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="flex items-center">
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
                 <h2 className="text-2xl mb-4 text-center">Login</h2>
                 <div className="mb-4">
