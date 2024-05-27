@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "excelcompare"
+version = "0.1.0"
+description = ""
+authors = ["Thoth2357"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+uvicorn = "^0.29.0"
+sqlmodel = "^0.0.18"
+pydantic = "^2.7.1"
+psycopg2-binary = "^2.9.9"
+argon2-cffi = "^23.1.0"
+python-multipart = "^0.0.9"
+fastapi-login = "^1.10.0"
+pandas = "^2.2.2"
+fpdf = "^1.7.2"
+python-jose = "^3.3.0"
+pydantic-settings = "^2.2.1"
+alembic = "^1.13.1"
+asyncpg = "^0.29.0"
+openpyxl = "^3.1.2"
+pillow = "^10.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
