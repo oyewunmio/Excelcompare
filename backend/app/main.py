@@ -136,7 +136,7 @@ async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFi
 
 @app.get("/get/me")
 def protected_route(user: User = Depends(get_current_user)):
-    return JSONResponse(status_code=201, content={"username": user.username, "role": user.user_role})
+    return JSONResponse(status_code=201, content={"username": user.username, "user_role": user.user_role})
 
 
 @app.get("/logs", response_model=List[Log])
