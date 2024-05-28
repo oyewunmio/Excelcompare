@@ -30,7 +30,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
             setToken(response.data.access_token, username, response.data.user_role);
             toast.success('Login successful!');
         } catch (error) {
-            toast.error('Error logging in. Please check your credentials.');
+            toast.error(error);
         }
     };
 

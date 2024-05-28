@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Checkbox } from '@mui/material';
+import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -76,19 +76,21 @@ const UsersPage: React.FC<{ token: string }> = ({ token }) => {
         setEditUser(null);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<{ name?: string; value: unknown }>
+    ) => {
         if (editUser) {
-            const { name, value, type } = e.target;
-            if (type === 'checkbox') {
-                const { checked } = e.target as HTMLInputElement;
+            const { name, value } = e.target;
+
+            if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
                 setEditUser({
                     ...editUser,
-                    [name]: checked,
+                    [name!]: e.target.checked,
                 });
             } else {
                 setEditUser({
                     ...editUser,
-                    [name]: value,
+                    [name!]: value,
                 });
             }
         }
@@ -152,15 +154,18 @@ const UsersPage: React.FC<{ token: string }> = ({ token }) => {
                             value={editUser.password}
                             onChange={handleChange}
                         />
-                        <TextField
-                            margin="dense"
-                            label="User Role"
-                            type="text"
-                            fullWidth
-                            name="user_role"
-                            value={editUser.user_role}
-                            onChange={handleChange}
-                        />
+                        <FormControl fullWidth margin="dense">
+                            <InputLabel>User Role</InputLabel>
+                            <Select
+                                label="User Role"
+                                name="user_role"
+                                value={editUser.user_role}
+                                onChange={(e) => handleChange(e as React.ChangeEvent<{ name?: string; value: unknown }>)}
+                            >
+                                <MenuItem value="admin">Admin</MenuItem>
+                                <MenuItem value="user">User</MenuItem>
+                            </Select>
+                        </FormControl>
                         <FormControlLabel
                             control={
                                 <Checkbox

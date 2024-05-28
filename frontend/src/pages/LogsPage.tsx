@@ -48,12 +48,19 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
         setLogs(sortedLogs);
     };
 
-    const formatDifferences = (differences: string | null) => {
+    const formatDifferences = (differences: string | null, truncate: boolean = false) => {
         if (!differences) return '';
-        return differences
-            .split('\n')
+        const formattedDifferences = differences
+            .split('",')
             .map((diff, index) => `${index + 1}. ${diff}`)
             .join('\n\n');
+        if (truncate) {
+            const lines = formattedDifferences.split('\n\n');
+            if (lines.length > 2) {
+                return `${lines.slice(0, 2).join('\n\n')}...`;
+            }
+        }
+        return formattedDifferences;
     };
 
     const generatePDF = (log: Log) => {
@@ -100,7 +107,6 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
                             Document Differences {sortColumn === 'document_differences' && (sortDirection === 'asc' ? '▲' : '▼')}
                         </TableCell>
                         <TableCell style={{ color: 'rgb(217,34,41)' }}>Interface</TableCell>
-                        <TableCell style={{ color: 'rgb(217,34,41)' }}>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -109,16 +115,18 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
                             <TableCell>{log.username}</TableCell>
                             <TableCell>{new Date(log.log_time).toLocaleString()}</TableCell>
                             <TableCell>
-                                <pre className="whitespace-pre-wrap">{formatDifferences(log.document_differences)}</pre>
-                            </TableCell>
-                            <TableCell>{log.interface}</TableCell>
-                            <TableCell>
-                                {log.document_differences && log.document_differences !== 'No differences found' && (
-                                    <IconButton onClick={() => generatePDF(log)} color="primary">
-                                        <PrintIcon />
-                                    </IconButton>
+                                <pre className="whitespace-pre-wrap">{formatDifferences(log.document_differences, true)}</pre>
+                                {log.document_differences && log.document_differences.split('",').length > 2 && (
+                                    <Button
+                                        onClick={() => generatePDF(log)}
+                                        color="primary"
+                                        startIcon={<PrintIcon />}
+                                    >
+                                        Proceed to Print To View More
+                                    </Button>
                                 )}
                             </TableCell>
+                            <TableCell>{log.interface}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
