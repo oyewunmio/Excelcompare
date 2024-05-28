@@ -28,6 +28,10 @@ def verify_password(hashed_password: str, plain_password: str) -> bool:
     except:
         return False
 
+def hash_password(password: str) -> str:
+    return ph.hash(password)
+
+
 def create_token(subject: str | Any):
     expire = datetime.utcnow() + timedelta(
         hours=settings.JWT_EXPIRE
@@ -48,6 +52,6 @@ def verify_token_access(token: str):
         print(e)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="",
+            detail=f"{e}",
         )
     return token_data

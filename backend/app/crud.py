@@ -19,3 +19,7 @@ def read_log(session: Session):
     statement = select(Log)
     logs = session.exec(statement).all()
     return logs
+
+def read_users(session: Session):
+    users = session.exec(select(User)).all()
+    return users

@@ -1,13 +1,14 @@
 from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session
 from models import User, Log
 from database import create_db_and_tables
-from schemas import UserLogin, Token
-from crud import get_user_by_username, create_log, read_log
-from utils import create_token, authenticate
+from schemas import UserCreate, Token, UserUpdate
+from crud import get_user_by_username, create_log, read_log, read_users
+from utils import create_token, authenticate, hash_password
 from typing import Annotated, List
 from deps import get_db, get_current_user, get_admin_user
 
@@ -45,7 +46,7 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
 
-    return Token(access_token=create_token(subject=user.username))
+    return Token(access_token=create_token(subject=user.id))
 
 @app.post("/compare")
 async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFile = File(...), file2: UploadFile = File(...), user: User = Depends(get_current_user)):
@@ -143,3 +144,40 @@ def protected_route(user: User = Depends(get_current_user)):
 async def get_logs(db: Annotated[Session, Depends(get_db)], user: User = Depends(get_admin_user)):
     logs = read_log(db)
     return logs
+
+# Create a new user only for superadmin users
+@app.post("/user")
+async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):    
+    user = User(username=user.username, password=hash_password(user.password), is_active=user.is_active)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+@app.patch("/user")
+async def update_user(user: UserUpdate, db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):
+    # update all user details provided or changed by superadmin
+    db_user = db.get(User, user.id)
+    if not db_user:
+        return JSONResponse(status_code=404, content={"message": "User not found"})
+    db_user.username = user.username
+    db_user.password = hash_password(user.password)
+    db_user.is_active = user.is_active
+    db.add(db_user)
+    db.commit()
+    return db_user
+
+
+@app.get("/user")
+async def get_users(db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):
+    users = read_users(db)
+    return JSONResponse(status_code=201, content=jsonable_encoder(users))
+
+@app.delete("/user/{user_id}")
+async def delete_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
+    db_user = db.get(User, user_id)
+    if not db_user:
+        return JSONResponse(status_code=404, content={"message": "User not found"})
+    db.delete(db_user)
+    db.commit()
+    return JSONResponse(status_code=200, content={"message": "User deleted successfully"})
