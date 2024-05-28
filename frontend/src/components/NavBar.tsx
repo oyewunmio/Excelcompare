@@ -24,9 +24,14 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
                             Welcome, {username}
                         </Typography>
                         {userRole === 'admin' && (
-                            <Button color="inherit" component={Link} to="/logs">
-                                View Logs
-                            </Button>
+                            <>
+                                <Button color="inherit" component={Link} to="/logs">
+                                    View Logs
+                                </Button>
+                                <Button color="inherit" component={Link} to="/create-user">
+                                    Create User
+                                </Button>
+                            </>
                         )}
                     </>
                 )}
