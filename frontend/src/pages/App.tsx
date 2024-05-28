@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ComparePage from './ComparePage';
 import LogsPage from './LogsPage';
 import CreateUserPage from './CreateUserPage';
+import UsersPage from './UsersPage';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
@@ -25,7 +26,7 @@ function App() {
         })
         .then((response) => {
           setToken(storedToken);
-          setUsername(response.data.username); 
+          setUsername(response.data.username);
           setUserRole(response.data.user_role);
           setIsLoading(false);
         })
@@ -64,6 +65,7 @@ function App() {
         <Route path="/" element={<ComparePage token={token} setToken={handleSetToken} />} />
         <Route path="/logs" element={<LogsPage token={token} />} />
         <Route path="/create-user" element={<CreateUserPage token={token} />} />
+        <Route path="/users" element={<UsersPage token={token} />} />
       </Routes>
       <ToastContainer />
     </Router>

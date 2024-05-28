@@ -38,7 +38,7 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({ token }) => {
 
         try {
             await axios.post(
-                'http://localhost:8000/user',
+                'http://localhost:8000/users',
                 { username, password, is_active: isActive },
                 {
                     headers: {
