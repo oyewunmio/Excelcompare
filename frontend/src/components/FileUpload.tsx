@@ -3,6 +3,7 @@ import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import { Box, Button, Typography, Container, Grid, IconButton } from '@mui/material';
 import { CloudUpload as CloudUploadIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
 interface FileUploadProps {
     token: string | null;
@@ -28,7 +29,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
             setFile1(selectedFile);
             onFileSelected();
         } else {
-            alert('Please select a valid CSV or XLSX file.');
+            toast.error('Please select a valid CSV or XLSX file.');
         }
     };
 
@@ -38,7 +39,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
             setFile2(selectedFile);
             onFileSelected();
         } else {
-            alert('Please select a valid CSV or XLSX file.');
+            toast.error('Please select a valid CSV or XLSX file.');
         }
     };
 
@@ -52,7 +53,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
 
     const handleFileUpload = async () => {
         if (!file1 || !file2 || !token) {
-            alert('Please select both files and ensure you are logged in.');
+            toast.error('Please select both files and ensure you are logged in.');
             return;
         }
         const formData = new FormData();
@@ -68,8 +69,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
             });
             setDifferences(response.data.differences);
             setReportData(response.data);
+            toast.success('Files compared successfully!');
         } catch (error) {
-            console.error('Error comparing files', error);
+            toast.error('Error comparing files.');
         }
     };
 
@@ -104,6 +106,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
         });
 
         doc.save("comparison_report.pdf");
+        toast.success('PDF generated successfully!');
     };
 
     return (
