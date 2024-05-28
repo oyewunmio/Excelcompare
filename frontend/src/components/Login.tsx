@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
     setToken: (token: string, username: string, userRole: string) => void;
@@ -8,24 +10,27 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ setToken }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            navigate('/');
+        }
+    }, [navigate]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData();
-        formData.append('username', username);
-        formData.append('password', password);
+        formData.append("username", username);
+        formData.append("password", password);
 
         try {
-            const response = await axios.post('http://localhost:8000/auth/login', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            const { access_token, user_role } = response.data;
-            setToken(access_token, username, user_role);
+            const response = await axios.post('http://localhost:8000/auth/login', formData);
+            setToken(response.data.access_token, username, response.data.user_role);
+            toast.success('Login successful!');
         } catch (error) {
-            console.error('Error logging in', error);
+            toast.error('Error logging in. Please check your credentials.');
         }
     };
 
@@ -51,7 +56,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
                         className="w-full px-3 py-2 border rounded"
                     />
                 </div>
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
+                <button type="submit" className="w-full bg-red-600 text-white py-2 rounded">
                     Login
                 </button>
             </form>
