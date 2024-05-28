@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 
 interface ComparePageProps {
     token: string | null;
-    setToken: (token: string, username: string) => void;
+    setToken: (token: string, username: string, userRole: string) => void;
 }
 
 // Make sure to initialize the modal's root element
@@ -18,19 +18,19 @@ const ComparePage: React.FC<ComparePageProps> = ({ token, setToken }) => {
     useEffect(() => {
         if (!token) {
             setIsLoginModalOpen(true);
+        } else {
+            setIsLoginModalOpen(false);
         }
     }, [token]);
 
-    const handleCompareClick = () => {
-        if (!token) {
-            setIsLoginModalOpen(true);
-        } else {
+    const handleFileSelected = () => {
+        if (token) {
             setShouldCompare(true);
         }
     };
 
-    const handleLoginSuccess = (token: string, username: string) => {
-        setToken(token, username);
+    const handleLoginSuccess = (token: string, username: string, userRole: string) => {
+        setToken(token, username, userRole);
         setIsLoginModalOpen(false);
         setShouldCompare(true);
     };
@@ -38,7 +38,7 @@ const ComparePage: React.FC<ComparePageProps> = ({ token, setToken }) => {
     return (
         <div>
             <div className="container mx-auto p-4">
-                <FileUpload token={token} shouldCompare={shouldCompare} />
+                <FileUpload token={token} shouldCompare={shouldCompare} onFileSelected={handleFileSelected} />
             </div>
             <Modal
                 isOpen={isLoginModalOpen}
