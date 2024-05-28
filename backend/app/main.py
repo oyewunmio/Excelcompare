@@ -79,13 +79,13 @@ async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFi
             if row < len(df1):
                 original_row = df1.iloc[row]
                 differences.append(
-                    f"Row {row+1} in original sheet is missing in compare sheet. "
+                    f"Row {row+2} in original sheet is missing in compare sheet. "
                     f"Row Details: {original_row.to_dict()}"
                 )
             if row < len(df2):
                 compare_row = df2.iloc[row]
                 differences.append(
-                    f"Row {row+1} in compare sheet is missing in original sheet. "
+                    f"Row {row+2} in compare sheet is missing in original sheet. "
                     f"Row Details: {compare_row.to_dict()}"
                 )
             continue
@@ -113,7 +113,7 @@ async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFi
                 compare_value = compare_value.to_pydatetime()
 
             if original_value != compare_value:
-                difference = f"Row: {row+1}, Column: {df1.columns[col]} - Original: {original_value}, Compare: {compare_value}"
+                difference = f"Row: {row+2}, Column: {df1.columns[col]} - Original: {original_value}, Compare: {compare_value}"
                 row_differences.append(difference)
 
         if row_differences:
