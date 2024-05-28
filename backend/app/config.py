@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     SMTP_HOST: str = "sandbox.smtp.mailtrap.io"
     SMTP_USER: str = "6f67eefc2d4b2a"
     SMTP_PASSWORD: str = "ff7aed1c675a39"
+    
+    DB_HOST: str = "127.0.0.1"
+    DB_NAME: str = "postgres"
+    DB_USER: str = "postgres"
+    DB_PASSWORD: str = "qwertyui8"
 
     # production
     # SMTP_TLS: bool = True

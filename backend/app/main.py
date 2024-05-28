@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session
 from models import User, Log
+from config import settings
 from database import create_db_and_tables
 from schemas import UserCreate, Token, UserUpdate
 from crud import get_user_by_username, create_log, read_log, read_users
@@ -40,6 +41,7 @@ async def login(
     user = authenticate(
         session=db, username=form_data.username, password=form_data.password
     )
+    print(user, "got here")
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     
@@ -47,6 +49,7 @@ async def login(
         raise HTTPException(status_code=400, detail="Inactive user")
 
     return Token(access_token=create_token(subject=user.id))
+
 
 @app.post("/compare")
 async def compare_files(db: Annotated[Session, Depends(get_db)], file1: UploadFile = File(...), file2: UploadFile = File(...), user: User = Depends(get_current_user)):
@@ -146,7 +149,7 @@ async def get_logs(db: Annotated[Session, Depends(get_db)], user: User = Depends
     return logs
 
 # Create a new user only for superadmin users
-@app.post("/user")
+@app.post("/users")
 async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):    
     user = User(username=user.username, password=hash_password(user.password), is_active=user.is_active)
     db.add(user)
@@ -154,7 +157,7 @@ async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)],
     db.refresh(user)
     return user
 
-@app.patch("/user")
+@app.patch("/users")
 async def update_user(user: UserUpdate, db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):
     # update all user details provided or changed by superadmin
     db_user = db.get(User, user.id)
@@ -168,12 +171,12 @@ async def update_user(user: UserUpdate, db: Annotated[Session, Depends(get_db)],
     return db_user
 
 
-@app.get("/user")
+@app.get("/users")
 async def get_users(db: Annotated[Session, Depends(get_db)], admin_user: User = Depends(get_admin_user)):
     users = read_users(db)
     return JSONResponse(status_code=201, content=jsonable_encoder(users))
 
-@app.delete("/user/{user_id}")
+@app.delete("/users/{user_id}")
 async def delete_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
     db_user = db.get(User, user_id)
     if not db_user:
@@ -181,3 +184,13 @@ async def delete_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
     db.delete(db_user)
     db.commit()
     return JSONResponse(status_code=200, content={"message": "User deleted successfully"})
+
+
+@app.get("/server")
+async def get_server_details():
+    return {
+        "DB_HOST": settings.DB_HOST,
+        "DB_NAME": settings.DB_NAME,
+        "DB_USER": settings.DB_USER,
+        "DB_PASSWORD": settings.DB_PASSWORD
+    }
