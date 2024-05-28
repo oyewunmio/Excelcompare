@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FileUpload from '../components/FileUpload';
 import Login from '../components/Login';
 import Modal from 'react-modal';
+import { Container, Typography, Box } from '@mui/material';
 
 interface ComparePageProps {
     token: string | null;
@@ -36,10 +37,10 @@ const ComparePage: React.FC<ComparePageProps> = ({ token, setToken }) => {
     };
 
     return (
-        <div>
-            <div className="container mx-auto p-4">
+        <Container>
+            <Box mt={4}>
                 <FileUpload token={token} shouldCompare={shouldCompare} onFileSelected={handleFileSelected} />
-            </div>
+            </Box>
             <Modal
                 isOpen={isLoginModalOpen}
                 onRequestClose={() => { }}
@@ -51,7 +52,7 @@ const ComparePage: React.FC<ComparePageProps> = ({ token, setToken }) => {
             >
                 <Login setToken={handleLoginSuccess} />
             </Modal>
-        </div>
+        </Container>
     );
 };
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
-import { AiOutlineFile, AiOutlineClose } from 'react-icons/ai';
+import { Box, Button, Typography, Container, Grid, IconButton } from '@mui/material';
+import { CloudUpload as CloudUploadIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 interface FileUploadProps {
     token: string | null;
@@ -106,61 +107,102 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-            <form className="bg-white p-6 rounded shadow-md w-full max-w-4xl">
-                <h2 className="text-2xl mb-4 text-center font-bold text-blue-600">Upload Files to Compare</h2>
-                <div className="flex justify-between mb-4">
-                    <div className="w-1/2 mr-2">
-                        <label className="block text-center mb-2 font-bold">Original</label>
-                        <div className="border-dashed border-2 border-blue-600 p-6 rounded-lg cursor-pointer relative">
-                            <input type="file" onChange={handleFileChange1} className="hidden" id="file-input1" />
-                            <label htmlFor="file-input1" className="flex flex-col items-center justify-center">
-                                <AiOutlineFile className="text-6xl text-blue-600 mb-2" />
-                                <span className="text-lg text-blue-600">Upload or <span className="underline">Browse</span></span>
-                            </label>
-                            {file1 && (
-                                <div className="absolute bottom-2 left-2 right-2 bg-white p-2 rounded shadow text-sm text-gray-700 flex items-center justify-between">
-                                    <span>{file1.name} ({(file1.size / 1024).toFixed(2)} KB)</span>
-                                    <button onClick={handleRemoveFile1} className="ml-2 text-red-600">
-                                        <AiOutlineClose />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    <div className="w-1/2 ml-2">
-                        <label className="block text-center mb-2 font-bold">Compare</label>
-                        <div className="border-dashed border-2 border-blue-600 p-6 rounded-lg cursor-pointer relative">
-                            <input type="file" onChange={handleFileChange2} className="hidden" id="file-input2" />
-                            <label htmlFor="file-input2" className="flex flex-col items-center justify-center">
-                                <AiOutlineFile className="text-6xl text-blue-600 mb-2" />
-                                <span className="text-lg text-blue-600">Upload or <span className="underline">Browse</span></span>
-                            </label>
-                            {file2 && (
-                                <div className="absolute bottom-2 left-2 right-2 bg-white p-2 rounded shadow text-sm text-gray-700 flex items-center justify-between">
-                                    <span>{file2.name} ({(file2.size / 1024).toFixed(2)} KB)</span>
-                                    <button onClick={handleRemoveFile2} className="ml-2 text-red-600">
-                                        <AiOutlineClose />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <button type="button" onClick={handleFileUpload} className="w-full bg-blue-500 text-white py-2 rounded mt-4">Compare</button>
-            </form>
+        <Container maxWidth="md">
+            <Typography variant="h4" align="center" gutterBottom color="primary">
+                Upload Files to Compare
+            </Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        border={1}
+                        borderColor="primary.main"
+                        borderRadius={4}
+                        p={4}
+                        style={{ borderStyle: 'dashed', cursor: 'pointer' }}
+                    >
+                        <input type="file" onChange={handleFileChange1} style={{ display: 'none' }} id="file-input1" />
+                        <label htmlFor="file-input1" style={{ textAlign: 'center' }}>
+                            <CloudUploadIcon style={{ fontSize: 48, color: 'rgb(217,34,41)' }} />
+                            <Typography variant="body1" color="primary">
+                                Upload or <span style={{ textDecoration: 'underline' }}>Browse</span>
+                            </Typography>
+                        </label>
+                        {file1 && (
+                            <Box mt={2} display="flex" alignItems="center" justifyContent="space-between" width="100%">
+                                <Typography variant="body2">{file1.name} ({(file1.size / 1024).toFixed(2)} KB)</Typography>
+                                <IconButton onClick={handleRemoveFile1} color="secondary">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        )}
+                    </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyContent="center"
+                        border={1}
+                        borderColor="primary.main"
+                        borderRadius={4}
+                        p={4}
+                        style={{ borderStyle: 'dashed', cursor: 'pointer' }}
+                    >
+                        <input type="file" onChange={handleFileChange2} style={{ display: 'none' }} id="file-input2" />
+                        <label htmlFor="file-input2" style={{ textAlign: 'center' }}>
+                            <CloudUploadIcon style={{ fontSize: 48, color: 'rgb(217,34,41)' }} />
+                            <Typography variant="body1" color="primary">
+                                Upload or <span style={{ textDecoration: 'underline' }}>Browse</span>
+                            </Typography>
+                        </label>
+                        {file2 && (
+                            <Box mt={2} display="flex" alignItems="center" justifyContent="space-between" width="100%">
+                                <Typography variant="body2">{file2.name} ({(file2.size / 1024).toFixed(2)} KB)</Typography>
+                                <IconButton onClick={handleRemoveFile2} color="secondary">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        )}
+                    </Box>
+                </Grid>
+            </Grid>
+            <Box mt={4} display="flex" justifyContent="center">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleFileUpload}
+                    startIcon={<CloudUploadIcon />}
+                    style={{ backgroundColor: 'rgb(217,34,41)' }}
+                >
+                    Compare
+                </Button>
+            </Box>
             {differences.length > 0 && (
-                <div className="mt-4 bg-white p-6 rounded shadow-md w-full max-w-4xl">
-                    <h3 className="text-xl mb-2 font-bold">Differences</h3>
-                    <div className="mb-4 p-4 bg-gray-100 border rounded max-h-64 overflow-y-auto whitespace-pre-wrap">
-                        {formatDifferences(differences.join('\n')).split('\n\n\n').map((diff, index) => (
-                            <p key={index} className="text-sm text-gray-700">{diff}</p>
+                <Box mt={4} p={2} border={1} borderColor="primary.main" borderRadius={4}>
+                    <Typography variant="h6" gutterBottom>
+                        Differences
+                    </Typography>
+                    <Box className="mb-4 p-4 bg-gray-100 border rounded max-h-64 overflow-y-auto whitespace-pre-wrap">
+                        {formatDifferences(differences.join('\n')).split('\n\n').map((diff, index) => (
+                            <Typography key={index} variant="body2">{diff}</Typography>
                         ))}
-                    </div>
-                    <button onClick={generatePDF} className="w-full bg-green-500 text-white py-2 rounded">Generate PDF</button>
-                </div>
+                    </Box>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={generatePDF}
+                        startIcon={<CloudUploadIcon />}
+                    >
+                        Generate PDF
+                    </Button>
+                </Box>
             )}
-        </div>
+        </Container>
     );
 };
 

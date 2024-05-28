@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
+import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PrintIcon from '@mui/icons-material/Print';
 
 interface Log {
     id: number;
@@ -74,57 +77,50 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl mb-4">Logs</h1>
-            <table className="min-w-full bg-white">
-                <thead>
-                    <tr>
-                        <th
-                            className="py-2 px-4 border-b cursor-pointer"
-                            onClick={() => handleSort('username')}
-                        >
+        <Container>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mt={4} mb={4}>
+                <Typography variant="h4" color="primary">Logs</Typography>
+                <Button variant="contained" color="primary" startIcon={<ArrowBackIcon />} href="/">
+                    Back to Compare
+                </Button>
+            </Box>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell onClick={() => handleSort('username')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
                             Username {sortColumn === 'username' && (sortDirection === 'asc' ? '▲' : '▼')}
-                        </th>
-                        <th
-                            className="py-2 px-4 border-b cursor-pointer"
-                            onClick={() => handleSort('log_time')}
-                        >
+                        </TableCell>
+                        <TableCell onClick={() => handleSort('log_time')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
                             Log Time {sortColumn === 'log_time' && (sortDirection === 'asc' ? '▲' : '▼')}
-                        </th>
-                        <th
-                            className="py-2 px-4 border-b cursor-pointer"
-                            onClick={() => handleSort('document_differences')}
-                        >
+                        </TableCell>
+                        <TableCell onClick={() => handleSort('document_differences')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
                             Document Differences {sortColumn === 'document_differences' && (sortDirection === 'asc' ? '▲' : '▼')}
-                        </th>
-                        <th className='py-2 px-4 border-b'>Interface</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
+                        </TableCell>
+                        <TableCell style={{ color: 'rgb(217,34,41)' }}>Interface</TableCell>
+                        <TableCell style={{ color: 'rgb(217,34,41)' }}>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {logs.map((log) => (
-                        <tr key={log.id}>
-                            <td className="py-2 px-4 border-b">{log.username}</td>
-                            <td className="py-2 px-4 border-b">{new Date(log.log_time).toLocaleString()}</td>
-                            <td className="py-2 px-4 border-b">
+                        <TableRow key={log.id}>
+                            <TableCell>{log.username}</TableCell>
+                            <TableCell>{new Date(log.log_time).toLocaleString()}</TableCell>
+                            <TableCell>
                                 <pre className="whitespace-pre-wrap">{formatDifferences(log.document_differences)}</pre>
-                            </td>
-                            <td className="py-2 px-4 border-b">{log.interface}</td>
-                            <td className="py-2 px-4 border-b">
+                            </TableCell>
+                            <TableCell>{log.interface}</TableCell>
+                            <TableCell>
                                 {log.document_differences && log.document_differences !== 'No differences found' && (
-                                    <button
-                                        onClick={() => generatePDF(log)}
-                                        className="bg-blue-500 text-white py-1 px-3 rounded"
-                                    >
-                                        Print Differences
-                                    </button>
+                                    <IconButton onClick={() => generatePDF(log)} color="primary">
+                                        <PrintIcon />
+                                    </IconButton>
                                 )}
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
+                </TableBody>
+            </Table>
+        </Container>
     );
 };
 

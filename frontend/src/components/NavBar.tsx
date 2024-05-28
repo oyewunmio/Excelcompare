@@ -1,4 +1,6 @@
 import React from 'react';
+import { AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
 interface NavBarProps {
@@ -8,21 +10,28 @@ interface NavBarProps {
 
 const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
     return (
-        <nav className="bg-blue-500 p-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="text-white text-lg font-bold">
-                    <Link to="/">File Compare App</Link>
-                </div>
-                <div className="flex items-center">
-                    {userRole === 'admin' && (
-                        <Link to="/logs" className="text-white mr-4">
-                            View Logs
-                        </Link>
-                    )}
-                    {username && <div className="text-white">Welcome, {username}</div>}
-                </div>
-            </div>
-        </nav>
+        <AppBar position="static" style={{ backgroundColor: 'rgb(217,34,41)' }}>
+            <Toolbar>
+                <IconButton edge="start" color="inherit" aria-label="menu">
+                    <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" style={{ flexGrow: 1 }}>
+                    Excel Comparator
+                </Typography>
+                {username && (
+                    <>
+                        <Typography variant="body1" style={{ marginRight: '20px' }}>
+                            Welcome, {username}
+                        </Typography>
+                        {userRole === 'admin' && (
+                            <Button color="inherit" component={Link} to="/logs">
+                                View Logs
+                            </Button>
+                        )}
+                    </>
+                )}
+            </Toolbar>
+        </AppBar>
     );
 };
 
