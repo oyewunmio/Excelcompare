@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PrintIcon from '@mui/icons-material/Print';
+import { toast } from 'react-toastify';
 
 interface Log {
     id: number;
@@ -30,6 +31,7 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
             })
             .catch((error) => {
                 console.error('Error fetching logs', error);
+                toast.error('Error fetching logs.');
             });
     }, [token]);
 
@@ -49,7 +51,7 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
     const formatDifferences = (differences: string | null) => {
         if (!differences) return '';
         return differences
-            .split('",')
+            .split('\n')
             .map((diff, index) => `${index + 1}. ${diff}`)
             .join('\n\n');
     };
@@ -74,6 +76,7 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
         });
 
         doc.save("comparison_report.pdf");
+        toast.success('PDF generated successfully!');
     };
 
     return (
