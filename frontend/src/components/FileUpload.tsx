@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Box, Button, Typography, Container, Grid, IconButton, Paper } from '@mui/material';
 import { CloudUpload as CloudUploadIcon, Delete as DeleteIcon, Print as PrintIcon } from '@mui/icons-material';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
 
 interface FileUploadProps {
     token: string | null;
@@ -96,7 +97,36 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, shouldCompare, onFileSel
     };
 
     const handlePrint = () => {
-        window.print();
+        const doc = new jsPDF();
+
+        doc.setFontSize(16);
+        doc.text("Comparison Report", 20, 20);
+
+        if (file1) {
+            doc.setFontSize(12);
+            doc.text(`Original File: ${file1.name}`, 20, 30);
+        }
+
+        if (file2) {
+            doc.setFontSize(12);
+            doc.text(`Compare File: ${file2.name}`, 20, 40);
+        }
+
+        doc.setFontSize(14);
+        doc.text("Differences:", 20, 50);
+
+        if (errorMessage) {
+            doc.setFontSize(12);
+            doc.text(errorMessage, 20, 60);
+        } else {
+            const list = showAllDifferences ? differences : differences.slice(0, 10);
+            list.forEach((diff, index) => {
+                doc.setFontSize(12);
+                doc.text(`${index + 1}. ${diff}`, 20, 60 + (index * 10));
+            });
+        }
+
+        doc.save("comparison_report.pdf");
     };
 
     return (
