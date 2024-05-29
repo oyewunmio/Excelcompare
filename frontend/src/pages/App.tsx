@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
+import NavBar from '../components/NavBar';
 import ComparePage from './ComparePage';
 import LogsPage from './LogsPage';
 import CreateUserPage from './CreateUserPage';
 import UsersPage from './UsersPage';
-import NavBar from '../components/NavBar';
-import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -54,13 +54,22 @@ function App() {
       });
   };
 
+  const handleLogout = () => {
+    setToken(null);
+    setUsername(null);
+    setUserRole(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userRole');
+  };
+
   if (isLoading) {
     return <div>Loading...</div>; // Add a loading spinner here if desired
   }
 
   return (
     <Router>
-      <NavBar username={username} userRole={userRole} />
+      <NavBar username={username} userRole={userRole} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<ComparePage token={token} setToken={handleSetToken} />} />
         <Route path="/logs" element={<LogsPage token={token} />} />

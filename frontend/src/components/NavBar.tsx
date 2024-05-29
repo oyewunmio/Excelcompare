@@ -8,19 +8,22 @@ import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PeopleIcon from '@mui/icons-material/People';
-import { Link } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
 interface NavBarProps {
     username: string | null;
     userRole: string | null;
+    onLogout: () => void;
 }
 
 const drawerWidth = 240;
 
-const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
+const NavBar: React.FC<NavBarProps> = ({ username, userRole, onLogout }) => {
     const theme = useTheme();
     const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
+    const navigate = useNavigate();
 
     const [drawerOpen, setDrawerOpen] = useState(isLargeScreen);
 
@@ -33,6 +36,11 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
             return;
         }
         setDrawerOpen(open);
+    };
+
+    const handleLogout = () => {
+        onLogout();
+        navigate('/');
     };
 
     const drawerList = () => (
@@ -51,7 +59,7 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
                     <>
                         <ListItem button component={Link} to="/create-user">
                             <ListItemIcon><PersonAddIcon /></ListItemIcon>
-                            <ListItemText primary="Create" />
+                            <ListItemText primary="Create User" />
                         </ListItem>
                         <ListItem button component={Link} to="/users">
                             <ListItemIcon><PeopleIcon /></ListItemIcon>
@@ -63,7 +71,10 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
                         </ListItem>
                     </>
                 )}
-                {/* Additional links can go here */}
+                <ListItem button onClick={handleLogout}>
+                    <ListItemIcon><LogoutIcon /></ListItemIcon>
+                    <ListItemText primary="Logout" />
+                </ListItem>
             </List>
         </div>
     );
