@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, useMediaQuery, CssBaseline, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+    AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem,
+    ListItemIcon, ListItemText, useMediaQuery, CssBaseline, Box
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -21,6 +24,10 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
 
     const [drawerOpen, setDrawerOpen] = useState(isLargeScreen);
 
+    useEffect(() => {
+        setDrawerOpen(isLargeScreen);
+    }, [isLargeScreen]);
+
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
             return;
@@ -31,8 +38,8 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
     const drawerList = () => (
         <div
             role="presentation"
-            onClick={isLargeScreen ? undefined : toggleDrawer(false)}
-            onKeyDown={isLargeScreen ? undefined : toggleDrawer(false)}
+            onClick={!isLargeScreen ? toggleDrawer(false) : undefined}
+            onKeyDown={!isLargeScreen ? toggleDrawer(false) : undefined}
             style={{ paddingTop: 64 }}
         >
             <List>
@@ -42,66 +49,61 @@ const NavBar: React.FC<NavBarProps> = ({ username, userRole }) => {
                 </ListItem>
                 {userRole === 'admin' && (
                     <>
-                        <ListItem button component={Link} to="/logs">
-                            <ListItemIcon><ListAltIcon /></ListItemIcon>
-                            <ListItemText primary="View Logs" />
-                        </ListItem>
                         <ListItem button component={Link} to="/create-user">
                             <ListItemIcon><PersonAddIcon /></ListItemIcon>
-                            <ListItemText primary="Create User" />
+                            <ListItemText primary="Create" />
                         </ListItem>
                         <ListItem button component={Link} to="/users">
                             <ListItemIcon><PeopleIcon /></ListItemIcon>
                             <ListItemText primary="Manage Users" />
                         </ListItem>
+                        <ListItem button component={Link} to="/logs">
+                            <ListItemIcon><ListAltIcon /></ListItemIcon>
+                            <ListItemText primary="View Logs" />
+                        </ListItem>
                     </>
                 )}
+                {/* Additional links can go here */}
             </List>
         </div>
     );
 
     return (
-        <div style={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar
-                position="fixed"
-                style={{ backgroundColor: 'rgb(217,34,41)', zIndex: theme.zIndex.drawer + 1 }}
-            >
+            <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1, backgroundColor: 'red' }}>
                 <Toolbar>
                     <IconButton
-                        edge="start"
                         color="inherit"
-                        aria-label="menu"
-                        onClick={toggleDrawer(!drawerOpen)}
-                        style={{ marginRight: 20 }}
+                        aria-label="open drawer"
+                        onClick={toggleDrawer(true)}
+                        edge="start"
+                        sx={{ mr: 2, display: { md: 'none' } }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
-                        Excel Comparator
+                    <Typography variant="h6" noWrap component="div">
+                        {username ? `Welcome, ${username}` : 'Welcome'}
                     </Typography>
-                    {username && (
-                        <Typography variant="body1" style={{ marginLeft: 'auto' }}>
-                            Welcome, {username}
-                        </Typography>
-                    )}
                 </Toolbar>
             </AppBar>
             <Drawer
-                anchor="left"
+                variant={isLargeScreen ? "persistent" : "temporary"}
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
-                variant={isLargeScreen ? 'persistent' : 'temporary'}
-                style={{ width: drawerWidth }}
-                PaperProps={{ style: { width: drawerWidth } }}
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                }}
             >
                 {drawerList()}
             </Drawer>
-            <Box component="main" style={{ flexGrow: 1, padding: theme.spacing(3), marginLeft: isLargeScreen && drawerOpen ? drawerWidth : 0, marginTop: 64 }}>
-                {/* Page content goes here */}
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
+                {/* Main content goes here */}
             </Box>
-        </div>
+        </Box>
     );
 };
 
