@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
-import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from '@mui/material';
+import { Container, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, TableSortLabel, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PrintIcon from '@mui/icons-material/Print';
 import { toast } from 'react-toastify';
@@ -97,14 +97,32 @@ const LogsPage: React.FC<{ token: string }> = ({ token }) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell onClick={() => handleSort('username')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
-                            Username {sortColumn === 'username' && (sortDirection === 'asc' ? '▲' : '▼')}
+                        <TableCell style={{ color: 'rgb(217,34,41)' }}>
+                            <TableSortLabel
+                                active={sortColumn === 'username'}
+                                direction={sortColumn === 'username' ? sortDirection : 'asc'}
+                                onClick={() => handleSort('username')}
+                            >
+                                Username
+                            </TableSortLabel>
                         </TableCell>
-                        <TableCell onClick={() => handleSort('log_time')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
-                            Log Time {sortColumn === 'log_time' && (sortDirection === 'asc' ? '▲' : '▼')}
+                        <TableCell style={{ color: 'rgb(217,34,41)' }}>
+                            <TableSortLabel
+                                active={sortColumn === 'log_time'}
+                                direction={sortColumn === 'log_time' ? sortDirection : 'asc'}
+                                onClick={() => handleSort('log_time')}
+                            >
+                                Log Time
+                            </TableSortLabel>
                         </TableCell>
-                        <TableCell onClick={() => handleSort('document_differences')} style={{ cursor: 'pointer', color: 'rgb(217,34,41)' }}>
-                            Document Differences {sortColumn === 'document_differences' && (sortDirection === 'asc' ? '▲' : '▼')}
+                        <TableCell style={{ color: 'rgb(217,34,41)' }}>
+                            <TableSortLabel
+                                active={sortColumn === 'document_differences'}
+                                direction={sortColumn === 'document_differences' ? sortDirection : 'asc'}
+                                onClick={() => handleSort('document_differences')}
+                            >
+                                Document Differences
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell style={{ color: 'rgb(217,34,41)' }}>Interface</TableCell>
                     </TableRow>
